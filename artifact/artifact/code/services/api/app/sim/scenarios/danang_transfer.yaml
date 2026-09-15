@@ -1,0 +1,42 @@
+# Stylized compound rain–tide event for the Thu Duc demo scene.
+# Every value produced from this file is SIMULATED (invariant I6).
+name: danang_transfer
+seed: 31415926
+ticks: 49            # 0..48, 5-minute steps -> 4 h event
+tick_minutes: 5
+ensemble: 32
+rain_mm_h:           # piecewise-linear control points [tick, mm/h]
+  - [0, 0]
+  - [6, 10]
+  - [12, 55]
+  - [18, 70]
+  - [24, 60]
+  - [32, 25]
+  - [40, 5]
+  - [48, 0]
+tide_m:              # water level rising through the event (compound driver)
+  - [0, 0.9]
+  - [20, 1.25]
+  - [32, 1.55]
+  - [48, 1.35]
+physics:
+  rain_to_cm: 0.0083     # mm/h -> cm per 5-min tick (=1/120)
+  runoff_sink_gain: 2.6  # how strongly sinks concentrate runoff
+  runoff_floor: 0.06
+  sink_pow: 1.5
+  flow_c: 0.22           # downhill transfer coefficient
+  drain_dt: 0.85         # drainage factor applied to kappa per tick
+  tide_c: 6.0            # cm of impounded water per m of tide above edge elevation (x sink)
+  tide_ref_m: 1.15       # tide level above which low edges start impounding
+  jump_warn_cm: 25
+uncertainty:
+  rain_mult_sigma: 0.30      # lognormal sigma on member rain multiplier
+  kappa_sigma: 0.35          # lognormal sigma on member drainage capacity
+  tide_sigma_m: 0.12
+  obs_decay_ticks: 6         # likelihood influence half-life
+feeds:
+  gauges: { count: 8, every_ticks: 1, noise_cm: 2.0 }
+  cameras: { count: 30, every_ticks: 2, noise_cm: 6.0 }
+events:
+  closures: []               # set live via /v1/ops/closure
+  outages: []                # set live via /v1/ops/outage

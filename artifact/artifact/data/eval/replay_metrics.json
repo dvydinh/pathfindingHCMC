@@ -1,0 +1,842 @@
+{
+ "design": "OSSE replay, single simulated compound event; OD-level bootstrap CI (NOT a storm-block CI \u2014 one storm only). Exposure measured against the designated truth run.",
+ "matched_comparison": {
+  "n": 12,
+  "dry_mean_exposure_s": 2.2,
+  "risk_aware_mean_exposure_s": 0.0,
+  "mean_added_time_s": 12.9,
+  "note": "paired on identical OD+depart; the honest apples-to-apples cut"
+ },
+ "refusal_note": "no_safe_route responses are a safety outcome, not missing data: at storm peak many cross-town trips genuinely traverse flooded corridors and the router advises waiting.",
+ "vehicle": "motorbike",
+ "n_od_sampled": 54,
+ "methods": {
+  "dry_B0": {
+   "n": 54,
+   "mean_unsafe_exposure_s": 8.8,
+   "exposure_ci95": [
+    4.0,
+    15.1
+   ],
+   "mean_travel_s": 548.6,
+   "pct_od_with_exposure": 27.8
+  },
+  "official_only_B6": {
+   "n": 54,
+   "mean_unsafe_exposure_s": 8.8,
+   "exposure_ci95": [
+    4.0,
+    15.1
+   ],
+   "mean_travel_s": 548.6,
+   "pct_od_with_exposure": 27.8
+  },
+  "risk_aware": {
+   "n": 12,
+   "mean_unsafe_exposure_s": 0.0,
+   "exposure_ci95": [
+    0.0,
+    0.0
+   ],
+   "mean_travel_s": 400.1,
+   "pct_od_with_exposure": 0.0
+  }
+ },
+ "no_safe_route_count": 42,
+ "runtime_s": 83.2,
+ "per_od": [
+  {
+   "od": 0,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 619.0,
+    "true_unsafe_exposure_s": 8.6
+   },
+   "official": {
+    "travel_s": 619.0,
+    "true_unsafe_exposure_s": 8.6
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 1,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 270.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 270.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 270.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 2,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 640.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 640.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 3,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 657.8,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 657.8,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 683.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 4,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 816.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 816.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 5,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 434.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 434.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 434.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 7,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 293.6,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 293.6,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 8,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 644.3,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 644.3,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 9,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 394.2,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 394.2,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 394.2,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 11,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 352.7,
+    "true_unsafe_exposure_s": 20.4
+   },
+   "official": {
+    "travel_s": 352.7,
+    "true_unsafe_exposure_s": 20.4
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 12,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 837.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 837.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 13,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 276.8,
+    "true_unsafe_exposure_s": 7.9
+   },
+   "official": {
+    "travel_s": 276.8,
+    "true_unsafe_exposure_s": 7.9
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 14,
+   "depart_tick": 18,
+   "dry": {
+    "travel_s": 681.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 681.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 15,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 431.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 431.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 431.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 16,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 487.9,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 487.9,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 17,
+   "depart_tick": 18,
+   "dry": {
+    "travel_s": 580.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 580.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 18,
+   "depart_tick": 18,
+   "dry": {
+    "travel_s": 477.6,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 477.6,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 19,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 373.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 373.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 20,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 380.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 380.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 380.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 22,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 734.2,
+    "true_unsafe_exposure_s": 10.4
+   },
+   "official": {
+    "travel_s": 734.2,
+    "true_unsafe_exposure_s": 10.4
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 23,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 721.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 721.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 24,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 581.2,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 581.2,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 25,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 703.0,
+    "true_unsafe_exposure_s": 20.4
+   },
+   "official": {
+    "travel_s": 703.0,
+    "true_unsafe_exposure_s": 20.4
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 26,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 337.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 337.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 27,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 418.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 418.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 418.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 28,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 403.8,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 403.8,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 30,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 1179.2,
+    "true_unsafe_exposure_s": 67.5
+   },
+   "official": {
+    "travel_s": 1179.2,
+    "true_unsafe_exposure_s": 67.5
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 31,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 365.7,
+    "true_unsafe_exposure_s": 18.4
+   },
+   "official": {
+    "travel_s": 365.7,
+    "true_unsafe_exposure_s": 18.4
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 32,
+   "depart_tick": 18,
+   "dry": {
+    "travel_s": 350.8,
+    "true_unsafe_exposure_s": 17.4
+   },
+   "official": {
+    "travel_s": 350.8,
+    "true_unsafe_exposure_s": 17.4
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 33,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 512.6,
+    "true_unsafe_exposure_s": 81.6
+   },
+   "official": {
+    "travel_s": 512.6,
+    "true_unsafe_exposure_s": 81.6
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 34,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 280.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 280.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 36,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 724.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 724.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 38,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 695.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 695.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 39,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 270.1,
+    "true_unsafe_exposure_s": 27.0
+   },
+   "official": {
+    "travel_s": 270.1,
+    "true_unsafe_exposure_s": 27.0
+   },
+   "risk_aware": {
+    "travel_s": 399.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 40,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 470.8,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 470.8,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 470.8,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 41,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 644.6,
+    "true_unsafe_exposure_s": 15.2
+   },
+   "official": {
+    "travel_s": 644.6,
+    "true_unsafe_exposure_s": 15.2
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 42,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 421.8,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 421.8,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 43,
+   "depart_tick": 18,
+   "dry": {
+    "travel_s": 439.6,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 439.6,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 44,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 927.9,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 927.9,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 45,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 609.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 609.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 46,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 1130.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 1130.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 47,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 289.0,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 289.0,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 289.0,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 48,
+   "depart_tick": 18,
+   "dry": {
+    "travel_s": 749.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 749.7,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 49,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 285.9,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 285.9,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 285.9,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  },
+  {
+   "od": 50,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 510.0,
+    "true_unsafe_exposure_s": 7.2
+   },
+   "official": {
+    "travel_s": 510.0,
+    "true_unsafe_exposure_s": 7.2
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 51,
+   "depart_tick": 18,
+   "dry": {
+    "travel_s": 496.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 496.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 52,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 476.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 476.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 53,
+   "depart_tick": 18,
+   "dry": {
+    "travel_s": 503.1,
+    "true_unsafe_exposure_s": 24.2
+   },
+   "official": {
+    "travel_s": 503.1,
+    "true_unsafe_exposure_s": 24.2
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 54,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 696.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 696.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 55,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 716.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 716.1,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 56,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 778.2,
+    "true_unsafe_exposure_s": 47.9
+   },
+   "official": {
+    "travel_s": 778.2,
+    "true_unsafe_exposure_s": 47.9
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 57,
+   "depart_tick": 26,
+   "dry": {
+    "travel_s": 685.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 685.5,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 58,
+   "depart_tick": 22,
+   "dry": {
+    "travel_s": 519.8,
+    "true_unsafe_exposure_s": 99.9
+   },
+   "official": {
+    "travel_s": 519.8,
+    "true_unsafe_exposure_s": 99.9
+   },
+   "risk_aware": null,
+   "no_safe_route": true
+  },
+  {
+   "od": 59,
+   "depart_tick": 14,
+   "dry": {
+    "travel_s": 343.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "official": {
+    "travel_s": 343.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "risk_aware": {
+    "travel_s": 343.4,
+    "true_unsafe_exposure_s": 0.0
+   },
+   "no_safe_route": false
+  }
+ ],
+ "is_synthetic": true
+}

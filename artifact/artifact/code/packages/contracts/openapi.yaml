@@ -1,0 +1,411 @@
+openapi: 3.1.0
+info:
+  title: Duong An VN API
+  version: 0.1.0
+  description: >
+    Local demo API. Every edge state carries evidence_class (observed|inferred|simulated)
+    and is_synthetic — invariants I1/I6 of PLAN.md section 0.
+paths:
+  /healthz:
+    get:
+      operationId: healthz
+      responses: { "200": { description: OK } }
+  /v1/scene:
+    get:
+      operationId: getScene
+      parameters:
+        - { name: scene, in: query, schema: { type: string, default: thuduc } }
+      responses:
+        "200": { description: "Scene metadata: bbox, ticks, edges GeoJSON URL" }
+  /v1/edges.geojson:
+    get:
+      operationId: getEdges
+      parameters:
+        - { name: scene, in: query, schema: { type: string, default: thuduc } }
+      responses:
+        "200": { description: Static edge geometry GeoJSON }
+  /v1/tiles/{z}/{x}/{y}.mvt:
+    get:
+      operationId: getTile
+      parameters:
+        - { name: z, in: path, required: true, schema: { type: integer } }
+        - { name: x, in: path, required: true, schema: { type: integer } }
+        - { name: y, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: Mapbox vector tile of static edge geometry }
+  /v1/assistant/status:
+    get:
+      operationId: getAssistantStatus
+      responses:
+        "200":
+          description: >
+            available flag, model id, provenance label, and grounding status
+            (gazetteer built? how many streets/landmarks, and their source).
+  /v1/assistant/models:
+    post:
+      operationId: postAssistantModels
+      description: >
+        Detect the provider from a user-supplied API key and list the models it can use
+        that are capable of tool calling — the assistant is a tool-use agent, so a model
+        without tool support cannot drive it. The key is used for this call and discarded:
+        never stored, never logged, and scrubbed out of any error returned.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [api_key]
+              properties:
+                api_key: { type: string, minLength: 8, maxLength: 512 }
+      responses:
+        "200": { description: "provider, label, and tool-capable models (recommended first)" }
+        "400": { description: "unrecognised key shape, or provider rejected the key" }
+        "502": { description: "provider unreachable" }
+  /v1/assistant:
+    post:
+      operationId: postAssistant
+      description: >
+        F1 conversational assistant (SSE). Read-only tool-use over the engine; numbers
+        come exclusively from tool results; output labelled "AI diễn giải".
+        Geography is resolved, never authored: no tool accepts a coordinate, place names
+        are looked up in an OSM-built gazetteer, and an unresolved or out-of-area name is
+        refused rather than approximated, and a multi-stop trip is refused whole if any
+        one stop fails. Multi-stop and comparative questions are executed by a
+        deterministic lower tier in one call rather than a model-driven tool loop.
+        Events: text, tool, query, routes, done, error.
+        The `query` event carries the validated formal query the turn compiled into
+        (op, resolved places, tick, vehicle, status) for display and audit.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message: { type: string, maxLength: 2000 }
+                history:
+                  type: array
+                  maxItems: 12
+                  items:
+                    type: object
+                    properties:
+                      role: { type: string, enum: [user, assistant] }
+                      content: { type: string, maxLength: 2000 }
+                tick: { type: integer }
+                vehicle: { $ref: "#/components/schemas/Vehicle" }
+                scene: { type: string }
+      parameters:
+        - name: X-LLM-Api-Key
+          in: header
+          required: false
+          schema: { type: string }
+          description: >
+            Optional user-supplied provider key. Carried in a header rather than the body
+            because bodies surface in validation errors and access logs. Overrides the
+            server key for this request only; never persisted.
+        - name: X-LLM-Model
+          in: header
+          required: false
+          schema: { type: string }
+          description: "Required when X-LLM-Api-Key is present; an id from /v1/assistant/models."
+      responses:
+        "200": { description: "text/event-stream" }
+        "400": { description: "unrecognised user key, or user key without a model" }
+        "503": { description: "no server key configured and no user key supplied" }
+  /v1/environment:
+    get:
+      operationId: getEnvironment
+      description: >
+        Ambient conditions - temperature, feels-like, humidity, PM2.5/PM10, mineral dust,
+        US AQI, UV - from a vendored Open-Meteo snapshot. The only REAL dynamic layer in
+        the demo: evidence_class observed, is_synthetic false, indexed by real clock hour
+        rather than scenario tick, and it feeds nothing in passability or routing. Reports
+        its own resolution (a handful of ~8-11 km source cells) and renders as blocks by
+        nearest source cell rather than an interpolated field.
+      parameters:
+        - { name: hour, in: query, schema: { type: integer, default: 0 } }
+        - { name: scene, in: query, schema: { type: string } }
+      responses:
+        "200": { description: per-cell values, render tiles, units, provenance }
+        "503": { description: "no vendored snapshot; run scripts/fetch_env.py" }
+  /v1/environment/series:
+    get:
+      operationId: getEnvironmentSeries
+      parameters:
+        - { name: metric, in: query, required: true, schema: { type: string } }
+        - { name: scene, in: query, schema: { type: string } }
+      responses:
+        "200": { description: scene-mean series for one metric }
+        "422": { description: unknown metric }
+  /v1/charging:
+    get:
+      operationId: getCharging
+      description: >
+        EV charging stations. Locations are REAL (OpenStreetMap, ODbL); whether the
+        approach is passable at a tick is SIMULATED from the storm scenario, and the two
+        provenance classes are reported separately. OSM currently maps no station inside
+        either demo bbox, so the response distinguishes an empty scene from an empty
+        world: it carries no_station_mapped_in_scene, a coverage note, and the nearest
+        real stations within a 12 km buffer, each marked unroutable because the graph
+        stops at the bbox.
+      parameters:
+        - { name: at, in: query, schema: { type: integer, default: 0 } }
+        - { name: vehicle, in: query, schema: { $ref: "#/components/schemas/Vehicle" } }
+        - { name: scene, in: query, schema: { type: string } }
+      responses:
+        "200": { description: in-scene stations with approach risk, plus nearest outside }
+        "422": { description: unknown vehicle }
+        "503": { description: "no vendored data; run scripts/fetch_charging.py" }
+  /v1/ops/sensor-coverage:
+    get:
+      operationId: getSensorCoverage
+      description: >
+        What the observation network actually informs - the engine's own assimilation
+        footprint (up to 3 graph hops within one basin, weights 1/0.6/0.35/0.2), not an
+        optical viewshed. Reports the gap as well as the reach: 38 sensors reach 161 of
+        25,809 edges in the Thu Duc scenario.
+      parameters:
+        - { name: scene, in: query, schema: { type: string } }
+        - { name: feed_id, in: query, schema: { type: string }, description: "one sensor's per-edge weights" }
+      responses:
+        "200": { description: per-sensor footprints and scene-wide covered fraction }
+        "404": { description: unknown feed_id }
+  /v1/weather:
+    get:
+      operationId: getWeather
+      description: >
+        Simulated area weather: scenario rain/tide forcing at a tick with 15/30/60-min
+        forecast values, full-event rain curve, and (with bbox) local flood statistics
+        for the viewport. Always is_synthetic.
+      parameters:
+        - { name: at, in: query, required: true, schema: { type: integer } }
+        - { name: bbox, in: query, schema: { type: string }, description: "w,s,e,n" }
+        - { name: scene, in: query, schema: { type: string, default: thuduc } }
+      responses:
+        "200": { description: rain/tide forcing + optional local stats }
+        "422": { description: invalid tick or bbox }
+  /v1/state:
+    get:
+      operationId: getState
+      description: Compact aligned-array scene state; array order matches /v1/edges.geojson.
+      parameters:
+        - { name: at, in: query, required: true, schema: { type: integer } }
+        - { name: vehicle, in: query, required: true, schema: { $ref: "#/components/schemas/Vehicle" } }
+        - { name: scene, in: query, schema: { type: string, default: thuduc } }
+      responses:
+        "200": { description: "bands/pi/p50_cm/width_cm/age_s arrays + provenance tags" }
+        "422": { description: invalid tick or vehicle }
+  /v1/ops/reset:
+    post:
+      operationId: postReset
+      description: Demo/rehearsal reset — clears closures, outages, user reports.
+      responses: { "200": { description: reset } }
+  /v1/passability:
+    get:
+      operationId: getPassability
+      parameters:
+        - { name: at, in: query, required: true, schema: { type: integer }, description: tick index }
+        - { name: vehicle, in: query, required: true, schema: { $ref: "#/components/schemas/Vehicle" } }
+        - { name: scene, in: query, schema: { type: string, default: thuduc } }
+      responses:
+        "200":
+          description: Edge states at tick
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PassabilityResponse" }
+  /v1/routes:
+    post:
+      operationId: postRoutes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RouteRequest" }
+      responses:
+        "200":
+          description: Route bundle
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RouteResponse" }
+  /v1/observations:
+    post:
+      operationId: postObservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ObservationRequest" }
+      responses:
+        "200": { description: Validation status }
+        "422": { description: Rejected (malformed / spoofed) }
+  /v1/provenance/{edge_id}:
+    get:
+      operationId: getProvenance
+      parameters:
+        - { name: edge_id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Public-safe source classes and freshness }
+  /v1/model-card:
+    get:
+      operationId: getModelCard
+      responses: { "200": { description: Scope, limitations, incident status } }
+  /v1/ops/feeds:
+    get:
+      operationId: getFeeds
+      responses: { "200": { description: Feed freshness + guard counters } }
+  /v1/ops/queue:
+    get:
+      operationId: getQueue
+      parameters:
+        - { name: at, in: query, required: true, schema: { type: integer } }
+      responses: { "200": { description: Active-sensing verification queue } }
+  /v1/ops/closure:
+    post:
+      operationId: postClosure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [edge_id, active]
+              properties:
+                edge_id: { type: string }
+                active: { type: boolean }
+      responses: { "200": { description: Closure toggled } }
+  /v1/ops/outage:
+    post:
+      operationId: postOutage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [feed_id, active]
+              properties:
+                feed_id: { type: string }
+                active: { type: boolean }
+      responses: { "200": { description: Outage toggled } }
+  /v1/ops/replay-metrics:
+    get:
+      operationId: getReplayMetrics
+      responses: { "200": { description: Benchmark results with CIs and n } }
+
+components:
+  schemas:
+    Vehicle:
+      type: string
+      enum: [motorbike, e_2w, car, response]
+    RiskBand:
+      type: string
+      enum: [low, uncertain, avoid, unknown]
+    EvidenceClass:
+      type: string
+      enum: [observed, inferred, simulated]
+    ReasonCode:
+      type: string
+      enum: [GAUGE_STALE, SOURCE_CONFLICT, NO_COVERAGE, OFFICIAL_CLOSURE,
+             DEPTH_ABOVE_ENVELOPE, RISING_TREND, SENSOR_OUTAGE, OK]
+    EdgeState:
+      type: object
+      required: [edge_id, edge_version, depth_q, pi, risk_band, evidence_class,
+                 evidence_age_s, source_mix, reason_codes, is_synthetic]
+      properties:
+        edge_id: { type: string }
+        edge_version: { type: integer }
+        depth_q:
+          type: object
+          required: [p10, p50, p90]
+          properties:
+            p10: { type: number }
+            p50: { type: number }
+            p90: { type: number }
+        pi: { type: number, minimum: 0, maximum: 1 }
+        risk_band: { $ref: "#/components/schemas/RiskBand" }
+        evidence_class: { $ref: "#/components/schemas/EvidenceClass" }
+        evidence_age_s: { type: integer }
+        source_mix:
+          type: object
+          additionalProperties: { type: integer }
+        reason_codes:
+          type: array
+          items: { $ref: "#/components/schemas/ReasonCode" }
+        is_synthetic: { type: boolean }
+    PassabilityResponse:
+      type: object
+      required: [model_version, generated_at, tick, edges]
+      properties:
+        model_version: { type: string }
+        generated_at: { type: string }
+        tick: { type: integer }
+        edges:
+          type: array
+          items: { $ref: "#/components/schemas/EdgeState" }
+    RouteRequest:
+      type: object
+      required: [origin, destination, depart_tick, vehicle]
+      properties:
+        origin: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+        destination: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+        waypoints:
+          type: array
+          maxItems: 6
+          description: Intermediate stops, visited in order; each leg departs at the previous leg's arrival tick.
+          items: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+        depart_tick: { type: integer }
+        vehicle: { $ref: "#/components/schemas/Vehicle" }
+        risk_tolerance: { type: number, default: 0.05 }
+        scene: { type: string, default: thuduc }
+    Route:
+      type: object
+      required: [kind, edge_ids, geometry, travel_time_s, risk_exposure_s, max_edge_risk]
+      properties:
+        kind: { type: string, enum: [fastest_dry, recommended, most_conservative] }
+        edge_ids: { type: array, items: { type: string } }
+        geometry: { type: object, description: GeoJSON LineString }
+        travel_time_s: { type: number }
+        risk_exposure_s: { type: number }
+        max_edge_risk: { type: number }
+    RouteResponse:
+      type: object
+      required: [status, routes, comparison, explanation]
+      properties:
+        status: { type: string, enum: [ok, no_safe_route] }
+        routes:
+          type: array
+          items: { $ref: "#/components/schemas/Route" }
+        wait_suggestion:
+          type: [object, "null"]
+          properties:
+            depart_tick: { type: integer }
+            reason: { type: string }
+        comparison:
+          type: object
+          properties:
+            added_time_s: { type: number }
+            avoided_exposure_s: { type: number }
+            evidence_age_p50_s: { type: number }
+        explanation:
+          type: array
+          items:
+            type: object
+            properties:
+              edge_id: { type: string }
+              reason_code: { $ref: "#/components/schemas/ReasonCode" }
+              detail: { type: string }
+    ObservationRequest:
+      type: object
+      required: [edge_id, tick, category, vehicle_context, consent]
+      properties:
+        edge_id: { type: string }
+        tick: { type: integer }
+        category:
+          type: string
+          enum: [dry, ankle, footrest, wheel_hub, impassable]
+        vehicle_context: { type: string, enum: [motorbike, e_2w, car, response, none] }
+        consent: { type: boolean }
+        location: { type: array, items: { type: number } }
+        thumb_b64: { type: [string, "null"], description: "64x64 blurred thumbnail only; raw image never uploaded (I7)" }

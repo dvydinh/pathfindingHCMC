@@ -1,0 +1,15 @@
+fastapi==0.115.*
+uvicorn[standard]==0.34.*
+numpy==2.2.*
+psycopg[binary]==3.2.*
+redis==5.2.*
+PyYAML==6.0.*
+shapely==2.0.*
+rasterio==1.4.*
+pyarrow==19.0.*
+httpx==0.28.*
+orjson==3.10.*
+anthropic>=0.116
+openai>=1.60          # BYOK: OpenAI + Gemini's OpenAI-compatible surface
+pytest==8.3.*
+hypothesis==6.125.*

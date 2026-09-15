@@ -1,0 +1,5 @@
+data/scenarios/*.npz
+data/scenarios/*.npy
+data/scenarios/*_meta.json
+data/eval/
+apps/web/node_modules/

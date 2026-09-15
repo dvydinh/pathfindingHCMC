@@ -1,0 +1,11 @@
+# Single source of truth for demo geography. DECISIONS.md entry 001.
+scenes:
+  thuduc:
+    name: "Thủ Đức core (pilot)"
+    bbox: [106.735, 10.815, 106.795, 10.870]   # W, S, E, N
+    scenario: thuduc_compound
+  danang:
+    name: "Đà Nẵng (frozen transfer scene)"
+    bbox: [108.200, 16.040, 108.245, 16.085]
+    scenario: danang_transfer
+default_scene: thuduc

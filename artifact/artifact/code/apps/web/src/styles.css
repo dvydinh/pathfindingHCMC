@@ -1,0 +1,40 @@
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; height: 100%; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+.app { display: flex; height: 100%; }
+.map-wrap { flex: 1; position: relative; }
+.attribution {
+  position: absolute; bottom: 4px; right: 6px; font-size: 10px;
+  color: #62727F; background: rgba(255,255,255,.8); padding: 1px 6px; border-radius: 3px; z-index: 5;
+}
+
+.vehicle-picker { max-width: 94vw; overflow-x: auto; white-space: nowrap; }
+.vehicle-picker::-webkit-scrollbar { display: none; }
+@media (max-width: 480px) {
+  .vehicle-label { display: none; }        /* icons only on narrow screens */
+  .vehicle-picker button { padding: 7px 10px !important; }
+}
+
+.legend { top: 10px; right: 48px; }
+@media (max-width: 480px) {
+  .legend { top: auto; right: 6px; bottom: 120px; font-size: 10px !important; padding: 5px 8px !important; }
+}
+
+.ctrl-left { bottom: 24px; left: 10px; }
+.time-slider { bottom: 56px; }
+@media (max-width: 480px) {
+  .time-slider { bottom: 8px; width: 96vw !important; padding: 6px 8px !important; }
+  .ctrl-left { bottom: 76px; left: 6px; }
+}
+
+.weather-panel { top: 10px; left: 10px; }
+@media (max-width: 480px) {
+  .weather-panel { top: 52px; left: 6px; width: 170px !important; }
+}
+
+.edge-inspector { top: 10px; left: 220px; }
+@media (max-width: 640px) { .edge-inspector { top: 10px; left: 10px; } }
+
+.assistant-panel { right: 10px; bottom: 100px; width: 340px; height: min(460px, 70vh); }
+@media (max-width: 640px) {
+  .assistant-panel { left: 4px; right: 4px; width: auto; bottom: 64px; height: 60vh; }
+}
