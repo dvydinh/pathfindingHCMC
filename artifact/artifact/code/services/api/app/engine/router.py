@@ -110,7 +110,17 @@ def snap_checked(sc: Scenario, lon: float, lat: float) -> tuple[int | None, floa
     d = _haversine_m(lon, lat, float(xs[i]), float(ys[i]))
     return (int(nodes[i]) if d <= SNAP_MAX_M else None), d
 
-VMAX_MS = 80 / 3.6      # A* heuristic speed bound (fastest road class)
+VMAX_MS = 80 / 3.6
+
+VMAX_VEHICLE = {
+    "motorbike": 60.0 / 3.6,
+    "e_2w":      45.0 / 3.6,
+    "car":       80.0 / 3.6,
+    "response":  80.0 / 3.6,
+}
+
+def _equirectangular_m(x1: float, y1: float, x2: float, y2: float, coslat: float) -> float:
+    return 111_320.0 * math.hypot((x1 - x2) * coslat, y1 - y2)
 
 def _node_coords(sc: Scenario) -> dict[int, tuple[float, float]]:
     key = "node_xy"
@@ -125,8 +135,6 @@ def _node_coords(sc: Scenario) -> dict[int, tuple[float, float]]:
 
 def _fast_layer(sc: Scenario, vehicle: str, tick: int, risk_mult: float,
                 flood_aware: bool) -> dict:
-    """Search-optimised per-tick layer: plain lists/sets so the A* inner loop does
-    zero numpy scalar boxing."""
     key = ("fast", vehicle, tick, round(risk_mult, 3), flood_aware, sc.version)
     if key in sc._pi_cache:
         return sc._pi_cache[key]
@@ -154,31 +162,49 @@ def _search(sc: Scenario, vehicle: str, src: int, dst: int, depart_tick: int,
     xy = _node_coords(sc)
     dx, dy = xy[dst]
     coslat = math.cos(math.radians(dy))
+
+    v_max = VMAX_VEHICLE.get(vehicle, VMAX_MS)
+    h_cache: dict[tuple[int, int], float] = {}
+    h_evals = 0
+
     def h(node: int, current_tick: int) -> float:
+        nonlocal h_evals
+        h_evals += 1
+
         if node == dst:
             return 0.0
-            
+
+        cache_key = (node, current_tick)
+        cached = h_cache.get(cache_key)
+        if cached is not None:
+            return cached
+
         fast = _fast_layer(sc, vehicle, current_tick, risk_mult, flood_aware)
-        node_cost, blocked = fast["cost"], fast["blocked"]
-        
-        min_h = INF
+        edge_costs = fast["cost"]
+        blocked = fast["blocked"]
+
+        best = INF
         for e in g.out_edges.get(node, []):
             if e in blocked:
                 continue
-            v_next = g.v_int[e]
-            step_cost = node_cost[e]
-            nx, ny = xy[v_next]
-            dist_m = 111_320.0 * math.hypot((nx - dx) * coslat, ny - dy)
-            rest_cost = dist_m / VMAX_MS
-            if step_cost + rest_cost < min_h:
-                min_h = step_cost + rest_cost
-                
-        if min_h == INF:
-            nx, ny = xy[node]
-            dist_m = 111_320.0 * math.hypot((nx - dx) * coslat, ny - dy)
-            return dist_m / VMAX_MS
-            
-        return min_h
+
+            step_cost = edge_costs[e]
+            vx, vy = xy[g.v_int[e]]
+            remaining_m = _equirectangular_m(vx, vy, dx, dy, coslat)
+            remaining_time = remaining_m / v_max
+
+            candidate = step_cost + remaining_time
+            if candidate < best:
+                best = candidate
+
+        if best == INF:
+            node_x, node_y = xy[node]
+            best = _equirectangular_m(node_x, node_y, dx, dy, coslat) / v_max
+
+        h_cache[cache_key] = best
+        return best
+
+    # ─── A* initialisation ──────────────────────────────────────────────
     dist: dict[int, float] = {src: 0.0}
     risk_acc: dict[int, float] = {src: 0.0}
     prev_edge: dict[int, int] = {}
