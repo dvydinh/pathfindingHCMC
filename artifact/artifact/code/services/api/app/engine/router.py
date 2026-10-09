@@ -154,16 +154,35 @@ def _search(sc: Scenario, vehicle: str, src: int, dst: int, depart_tick: int,
     xy = _node_coords(sc)
     dx, dy = xy[dst]
     coslat = math.cos(math.radians(dy))
-    def h(node: int) -> float:
-        # admissible: straight-line distance at the fastest possible speed;
-        # risk/uncertainty penalties are nonnegative additions on top of time.
-        x, y = xy[node]
-        dist_m = 111_320.0 * math.hypot((x - dx) * coslat, y - dy)
-        return dist_m / VMAX_MS
+    def h(node: int, current_tick: int) -> float:
+        if node == dst:
+            return 0.0
+            
+        fast = _fast_layer(sc, vehicle, current_tick, risk_mult, flood_aware)
+        node_cost, blocked = fast["cost"], fast["blocked"]
+        
+        min_h = INF
+        for e in g.out_edges.get(node, []):
+            if e in blocked:
+                continue
+            v_next = g.v_int[e]
+            step_cost = node_cost[e]
+            nx, ny = xy[v_next]
+            dist_m = 111_320.0 * math.hypot((nx - dx) * coslat, ny - dy)
+            rest_cost = dist_m / VMAX_MS
+            if step_cost + rest_cost < min_h:
+                min_h = step_cost + rest_cost
+                
+        if min_h == INF:
+            nx, ny = xy[node]
+            dist_m = 111_320.0 * math.hypot((nx - dx) * coslat, ny - dy)
+            return dist_m / VMAX_MS
+            
+        return min_h
     dist: dict[int, float] = {src: 0.0}
     risk_acc: dict[int, float] = {src: 0.0}
     prev_edge: dict[int, int] = {}
-    pq = [(h(src), src)]
+    pq = [(h(src, depart_tick), src)]
     seen = set()
     while pq:
         _, node = heapq.heappop(pq)
@@ -186,7 +205,7 @@ def _search(sc: Scenario, vehicle: str, src: int, dst: int, depart_tick: int,
                 dist[v2] = nd
                 risk_acc[v2] = r_here + pcon[e]
                 prev_edge[v2] = e
-                heapq.heappush(pq, (nd + h(v2), v2))
+                heapq.heappush(pq, (nd + h(v2, arr_tick), v2))
     if dst not in prev_edge and dst != src:
         return None
     # reconstruct
